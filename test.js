@@ -65,7 +65,7 @@ describe("fil-token-actor", function () {
       from: signer,
       method: 3,
       value: "0",
-      params: Buffer.from(constructorParams).toString("base64"),
+      params,
       nonce,
     });
 
