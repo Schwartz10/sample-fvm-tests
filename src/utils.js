@@ -1,7 +1,6 @@
 const cbor = require("@ipld/dag-cbor");
 const leb = require("leb128");
 const base32Decode = require("base32-decode");
-const borc = require("borc");
 const blake = require("blakejs");
 const BN = require("bn.js");
 const { Address } = require("@glif/filecoin-address");
@@ -102,15 +101,10 @@ function deserializeTokenAmount(tokenAmount) {
 }
 
 function serializeCid(cid) {
-  try {
-    const codeCid = CID.parse(cid);
-    // Needs a zero byte in front
-    const codeCidBytes = new Uint8Array(codeCid.bytes.length + 1);
-    codeCidBytes.set(codeCid.bytes, 1);
-    return new borc.Tagged(42, codeCidBytes);
-  } catch (err) {
-    console.log({ err });
-  }
+  const c = CID.parse(cid);
+  const codeCidBytes = new Uint8Array(c.bytes.length + 1);
+  codeCidBytes.set(c.bytes, 1);
+  return { 42: Buffer.from(codeCidBytes, "hex") };
 }
 
 function deserializeCid({ code, version, multihash, bytes }) {
@@ -122,6 +116,7 @@ const serializeParamsRaw = (params) => {
   return cbor.encode(
     params.reduce((accum, toSerialize) => {
       if (toSerialize.t === "String") accum.push(toSerialize.v);
+      else if (toSerialize.t === "Cid") accum.push(serializeCid(toSerialize.v));
       else if (toSerialize.t === "Address")
         accum.push(serializeAddress(toSerialize.v));
       else if (toSerialize.t === "TokenAmount")

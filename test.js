@@ -4,7 +4,6 @@ const RPCClient = require("@glif/filecoin-rpc-client").default;
 const Filecoin = require("@glif/filecoin-wallet-provider").default;
 const { SECP256K1KeyProvider } = require("@glif/filecoin-wallet-provider");
 const { Message } = require("@glif/filecoin-message");
-const borc = require("borc");
 const {
   deserialize,
   serializeParamsRaw,
@@ -45,19 +44,23 @@ describe("fil-token-actor", function () {
 
     const [signer] = await provider.wallet.getAccounts(0, 1, "f");
 
+    const signerID = await lotusRPC.request("StateLookupID", signer, null);
+
+    // when i plug these directly into the Lotus CLI, create-actor succeeds
     const constructorParams = serializeParamsRaw([
       { k: "name", v: NAME, t: "String" },
       { k: "symbol", v: SYMBOL, t: "String" },
       { k: "max_supply", v: MAX_SUPPLY, t: "TokenAmount" },
-      { k: "owner", v: signer, t: "Address" },
+      { k: "owner", v: signerID, t: "Address" },
     ]);
 
     const serializedActorCode = serializeCid(ACTOR_CODE_CID);
-    console.log(Buffer.from(constructorParams).toString("base64"));
 
-    const params = borc
-      .encode([serializedActorCode, constructorParams])
-      .toString("base64");
+    const params = Buffer.from(
+      cbor.encode([serializedActorCode, constructorParams])
+    ).toString("base64");
+
+    console.log(params);
     const nonce = await provider.getNonce(signer);
 
     const msg = new Message({
