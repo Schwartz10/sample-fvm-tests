@@ -66,7 +66,7 @@ describe("fil-token-actor", function () {
     const msg = new Message({
       to: EXEC_ACTOR,
       from: signer,
-      method: 3,
+      method: 2,
       value: "0",
       params,
       nonce,
