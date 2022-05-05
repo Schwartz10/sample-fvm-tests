@@ -12,6 +12,7 @@
   "devDependencies": {
     "@glif/filecoin-address": "^2.0.0-beta.3",
     "@glif/filecoin-message": "^2.0.0-beta.11",
+    "@glif/filecoin-message-confirmer": "^2.0.0-beta.8",
     "@glif/filecoin-number": "^2.0.0-beta.0",
     "@glif/filecoin-rpc-client": "^2.0.0-beta.8",
     "@glif/filecoin-wallet-provider": "^2.0.0-beta.11",

@@ -101,10 +101,7 @@ function deserializeTokenAmount(tokenAmount) {
 }
 
 function serializeCid(cid) {
-  const c = CID.parse(cid);
-  const codeCidBytes = new Uint8Array(c.bytes.length + 1);
-  codeCidBytes.set(c.bytes, 1);
-  return { 42: Buffer.from(codeCidBytes, "hex") };
+  return CID.parse(cid);
 }
 
 function deserializeCid({ code, version, multihash, bytes }) {
@@ -153,6 +150,7 @@ const deserialize = (base64Encoded, template) => {
 module.exports = {
   serializeCid,
   deserialize,
+  deserializeAddress,
   serializeParams,
   serializeParamsRaw,
 };
